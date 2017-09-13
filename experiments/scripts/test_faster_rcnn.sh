@@ -6,43 +6,22 @@ set -e
 export PYTHONUNBUFFERED="True"
 
 GPU_ID=$1
-DATASET=$2
-NET=$3
+NET=$2
 
 array=( $@ )
 len=${#array[@]}
 EXTRA_ARGS=${array[@]:3:$len}
 EXTRA_ARGS_SLUG=${EXTRA_ARGS// /_}
 
-case ${DATASET} in
-  pascal_voc)
-    TRAIN_IMDB="voc_2007_trainval"
-    TEST_IMDB="voc_2007_test"
-    ITERS=70000
-    ANCHORS="[8,16,32]"
-    RATIOS="[0.5,1,2]"
-    ;;
-  pascal_voc_0712)
-    TRAIN_IMDB="voc_2007_trainval+voc_2012_trainval"
-    TEST_IMDB="voc_2007_test"
-    ITERS=110000
-    ANCHORS="[8,16,32]"
-    RATIOS="[0.5,1,2]"
-    ;;
-  coco)
-    TRAIN_IMDB="coco_2014_train+coco_2014_valminusminival"
-    TEST_IMDB="coco_2014_minival"
-    ITERS=490000
-    ANCHORS="[4,8,16,32]"
-    RATIOS="[0.5,1,2]"
-    ;;
-  *)
-    echo "No dataset given"
-    exit
-    ;;
-esac
+TRAIN_IMDB="nexet_train"
+TEST_IMDB="nexet_val"
+STEPSIZE="[100000]"
+ITERS=110000
+ANCHORS="[8,16,32]"
+RATIOS="[0.5,1,2]"
 
-LOG="experiments/logs/test_${NET}_${TRAIN_IMDB}_${EXTRA_ARGS_SLUG}.txt.`date +'%Y-%m-%d_%H-%M-%S'`"
+LOG="experiments/logs/${NET}_${TRAIN_IMDB}_${EXTRA_ARGS_SLUG}_${NET}.txt.`date +'%Y-%m-%d_%H-%M-%S'`"
+
 exec &> >(tee -a "$LOG")
 echo Logging output to "$LOG"
 
